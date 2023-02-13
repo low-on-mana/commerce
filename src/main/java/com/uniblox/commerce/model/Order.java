@@ -27,6 +27,10 @@ public class Order {
     private Double amount;
 
     @Column
+    @Builder.Default
+    private Double discountedAmount = 0.0;
+
+    @Column
     @Convert(converter = LineItemConverter.class)
     private List<LineItem> items;
 
@@ -37,5 +41,10 @@ public class Order {
 
     public void addDiscountApplied(String discountCode) {
         discountsApplied.add(discountCode);
+    }
+
+    public void provideDiscount(Double discountedAmount) {
+        this.discountedAmount = discountedAmount;
+        this.amount = Math.max(this.amount - this.discountedAmount, 0);
     }
 }

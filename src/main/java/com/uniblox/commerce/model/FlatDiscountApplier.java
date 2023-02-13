@@ -12,6 +12,6 @@ public class FlatDiscountApplier extends DiscountApplier {
     @Override
     public void apply(Order order) {
         super.apply(order);
-        order.setAmount(Math.max(order.getAmount() - discount.getDiscountValue(), 0));
+        order.provideDiscount(discount.getDiscountValue());
     }
 }

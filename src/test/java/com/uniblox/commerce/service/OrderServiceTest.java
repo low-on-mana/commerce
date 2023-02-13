@@ -64,6 +64,7 @@ class OrderServiceTest {
 
         Order savedOrder =  orderRepository.findAll().stream().findFirst().get();
         assertEquals(110.0, savedOrder.getAmount());
+        assertEquals(0.0, savedOrder.getDiscountedAmount());
         assertEquals(2, savedOrder.getItems().size());
     }
 
@@ -85,6 +86,7 @@ class OrderServiceTest {
         Order savedOrder =  orderRepository.findAll().stream().findFirst().get();
         assertEquals(60.0, savedOrder.getAmount());
         assertEquals(2, savedOrder.getItems().size());
+        assertEquals(50.0, savedOrder.getDiscountedAmount());
         assertEquals(List.of("FLAT_50_OFF"), savedOrder.getDiscountsApplied());
     }
 
@@ -106,6 +108,7 @@ class OrderServiceTest {
         Order savedOrder =  orderRepository.findAll().stream().findFirst().get();
         assertEquals(60.0, savedOrder.getAmount());
         assertEquals(2, savedOrder.getItems().size());
+        assertEquals(50.0, savedOrder.getDiscountedAmount());
         assertEquals(List.of("FLAT_50_OFF"), savedOrder.getDiscountsApplied());
     }
 

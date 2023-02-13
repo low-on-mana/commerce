@@ -12,6 +12,7 @@ public class PercentageDiscountApplier extends DiscountApplier {
     @Override
     public void apply(Order order) {
         super.apply(order);
-        order.setAmount(order.getAmount() - (order.getAmount() * discount.getDiscountValue()) / 100);
+        Double discountAmount = (order.getAmount() * discount.getDiscountValue()) / 100;
+        order.provideDiscount(discountAmount);
     }
 }
