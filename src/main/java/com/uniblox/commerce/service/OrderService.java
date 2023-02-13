@@ -55,6 +55,18 @@ public class OrderService {
         cart.addToCart(addToCartRequest.getProductId(), addToCartRequest.getQuantity());
     }
 
+    public Double totalPurchaseAmount() {
+        return orderRepository.totalPurchaseAmount();
+    }
+
+    public Double totalDiscountAmount() {
+        return orderRepository.totalDiscountAmount();
+    }
+
+    public List<LineItem> listOfItemsPurchased() {
+        return orderRepository.findItems();
+    }
+
     public void clearCart() {
         cart.clear();
     }

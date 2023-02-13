@@ -39,6 +39,11 @@ public class Discount {
     @Column
     private Double discountValue;
 
+    /**
+     *  Since discounts can have variety of applicability conditions, we need a flexible column to store them.
+     *  Discount could be applicable on dateOfBirth, holidays, everyNthOrder, alwaysApplicable etc.
+     *  TODO: To create a class on top of this map for simplicity
+     */
     @Column
     @Convert(converter = HashMapConverter.class)
     private HashMap<String, Object> metadata = new HashMap<>();

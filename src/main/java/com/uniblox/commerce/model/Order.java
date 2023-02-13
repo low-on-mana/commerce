@@ -28,7 +28,7 @@ public class Order {
 
     @Column
     @Builder.Default
-    private Double discountedAmount = 0.0;
+    private Double discountAmount = 0.0;
 
     @Column
     @Convert(converter = LineItemConverter.class)
@@ -43,8 +43,8 @@ public class Order {
         discountsApplied.add(discountCode);
     }
 
-    public void provideDiscount(Double discountedAmount) {
-        this.discountedAmount = discountedAmount;
-        this.amount = Math.max(this.amount - this.discountedAmount, 0);
+    public void provideDiscount(Double discountAmount) {
+        this.discountAmount = discountAmount;
+        this.amount = Math.max(this.amount - this.discountAmount, 0);
     }
 }

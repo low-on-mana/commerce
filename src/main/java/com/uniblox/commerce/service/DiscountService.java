@@ -42,4 +42,8 @@ public class DiscountService {
             return discountApplicability.isApplicable(customerOrderProfile);
         }).collect(Collectors.toList());
     }
+
+    public List<String> listOfDiscountCodes() {
+        return discountRepository.findCode();
+    }
 }
