@@ -25,7 +25,7 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public Order checkout() {
-        return orderService.checkOut();
+    public Order checkout(@RequestBody CheckoutRequest checkoutRequest) {
+        return orderService.checkOut(checkoutRequest);
     }
 }

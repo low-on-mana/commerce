@@ -1,11 +1,10 @@
 package com.uniblox.commerce.service;
 
 import com.uniblox.commerce.contracts.AddToCartRequest;
-import com.uniblox.commerce.model.Cart;
-import com.uniblox.commerce.model.LineItem;
-import com.uniblox.commerce.model.Order;
-import com.uniblox.commerce.model.Product;
+import com.uniblox.commerce.contracts.CheckoutRequest;
+import com.uniblox.commerce.model.*;
 import com.uniblox.commerce.repository.OrderRepository;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +21,15 @@ public class OrderService {
 
     private final ProductService productService;
 
-    public Order checkOut() {
+    private final DiscountService discountService;
+
+    private final Validator validator;
+
+    public Order checkOut(CheckoutRequest checkoutRequest) {
         Order order = fromCart(cart);
+        if(validator.validate(checkoutRequest).isEmpty()) {
+            discountService.applyDiscount(checkoutRequest.getDiscountCode(), order);
+        }
         orderRepository.save(order);
         return order;
     }
@@ -48,4 +54,5 @@ public class OrderService {
                 .items(cart.getItems())
                 .build();
     }
+
 }

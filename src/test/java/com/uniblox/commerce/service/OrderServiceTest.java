@@ -1,13 +1,18 @@
 package com.uniblox.commerce.service;
 
 import com.uniblox.commerce.contracts.AddToCartRequest;
+import com.uniblox.commerce.contracts.CheckoutRequest;
 import com.uniblox.commerce.model.Cart;
+import com.uniblox.commerce.model.Discount;
 import com.uniblox.commerce.model.Order;
+import com.uniblox.commerce.model.Product;
+import com.uniblox.commerce.repository.DiscountRepository;
 import com.uniblox.commerce.repository.OrderRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.uniblox.commerce.repository.ProductRepository;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,14 +26,37 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private DiscountRepository discountRepository;
+
+    @Autowired
     private Cart cart;
+
+    @BeforeEach
+    void setup() {
+        productRepository.save(new Product(1L, "gloves", 20.0));
+        productRepository.save(new Product(2L, "hat", 25.0));
+        productRepository.save(new Product(3L, "cap", 30.0));
+
+        discountRepository.save(new Discount(1L, "FLAT_50_OFF", Discount.DiscountType.FLAT, 50.0));
+    }
+
+    @AfterEach
+    void clear() {
+        orderService.clearCart();
+        productRepository.deleteAll();
+        discountRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("checkout correctly creates and save order")
+    @Transactional
     void checkOut() {
         orderService.addToCart(new AddToCartRequest(1L, 1));
         orderService.addToCart(new AddToCartRequest(3L, 3));
-        Order order = orderService.checkOut();
+        Order order = orderService.checkOut(new CheckoutRequest());
 
         assertEquals(110.0, order.getAmount());
         assertEquals(1, orderRepository.findAll().size());
@@ -36,14 +64,27 @@ class OrderServiceTest {
         Order savedOrder =  orderRepository.findAll().stream().findFirst().get();
         assertEquals(110.0, savedOrder.getAmount());
         assertEquals(2, savedOrder.getItems().size());
+    }
 
-        orderService.clearCart();
+    @Test
+    @DisplayName("checkout correctly applies discount")
+    @Transactional
+    void checkout2() {
+        orderService.addToCart(new AddToCartRequest(1L, 1));
+        orderService.addToCart(new AddToCartRequest(3L, 3));
+        Order order = orderService.checkOut(new CheckoutRequest("FLAT_50_OFF"));
+
+        assertEquals(60.0, order.getAmount());
+        assertEquals(1, orderRepository.findAll().size());
+
+        Order savedOrder =  orderRepository.findAll().stream().findFirst().get();
+        assertEquals(60.0, savedOrder.getAmount());
+        assertEquals(2, savedOrder.getItems().size());
     }
 
     @Test
     @DisplayName("addToCart correctly adds item to the cart")
     void addToCart() {
-
         orderService.addToCart(new AddToCartRequest(1L, 1));
         orderService.addToCart(new AddToCartRequest(3L, 3));
 
@@ -52,8 +93,6 @@ class OrderServiceTest {
         assertEquals(1, cart.getItems().get(0).getQuantity());
         assertEquals(3L, cart.getItems().get(1).getProductId());
         assertEquals(3, cart.getItems().get(1).getQuantity());
-
-        orderService.clearCart();
     }
 
     @Test
