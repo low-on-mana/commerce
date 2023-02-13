@@ -28,7 +28,7 @@ public class OrderService {
     public Order checkOut(CheckoutRequest checkoutRequest) {
         Order order = fromCart(cart);
         if(validator.validate(checkoutRequest).isEmpty()) {
-            discountService.applyDiscount(checkoutRequest.getDiscountCode(), order);
+            discountService.applyDiscount(checkoutRequest.getDiscountCode(), order, createProfile());
         }
         orderRepository.save(order);
         return order;
@@ -53,6 +53,10 @@ public class OrderService {
                 .amount(total)
                 .items(cart.getItems())
                 .build();
+    }
+
+    private CustomerOrderProfile createProfile() {
+        return new CustomerOrderProfile(orderRepository.count());
     }
 
 }

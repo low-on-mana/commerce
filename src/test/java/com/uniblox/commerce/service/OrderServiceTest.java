@@ -40,7 +40,8 @@ class OrderServiceTest {
         productRepository.save(new Product(2L, "hat", 25.0));
         productRepository.save(new Product(3L, "cap", 30.0));
 
-        discountRepository.save(new Discount(1L, "FLAT_50_OFF", Discount.DiscountType.FLAT, 50.0));
+        discountRepository.save(new Discount(1L, "FLAT_50_OFF", Discount.DiscountType.FLAT,
+                Discount.DiscountApplicability.ALWAYS, 50.0, null));
     }
 
     @AfterEach
