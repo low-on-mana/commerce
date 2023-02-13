@@ -8,6 +8,8 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -26,10 +28,25 @@ public class OrderService {
     private final Validator validator;
 
     public Order checkOut(CheckoutRequest checkoutRequest) {
+        // We create order object from cart
         Order order = fromCart(cart);
-        if(validator.validate(checkoutRequest).isEmpty()) {
-            discountService.applyDiscount(checkoutRequest.getDiscountCode(), order, createProfile());
+
+        // We create user profile which might be useful for figuring out which discount to give to user
+        CustomerOrderProfile customerOrderProfile = createProfile();
+
+        // If user doesn't provide a discount code, we chose one for him automatically in the system
+        if(!checkoutRequest.isDiscountCodePresent()) {
+            List<Discount> applicableDiscounts = discountService.findApplicableDiscounts(customerOrderProfile);
+            if(!applicableDiscounts.isEmpty()) {
+                checkoutRequest.setDiscountCode(applicableDiscounts.get(0).getCode());
+            }
         }
+
+        // We apply the discount if there is any discount code provided by user or automatically selected by system
+        if(checkoutRequest.isDiscountCodePresent()) {
+            discountService.applyDiscount(checkoutRequest.getDiscountCode(), order, customerOrderProfile);
+        }
+
         orderRepository.save(order);
         return order;
     }

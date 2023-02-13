@@ -15,8 +15,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class CheckoutRequest implements Serializable {
 
-    @NotNull
-    @NotEmpty
     private String discountCode;
+
+    public boolean isDiscountCodePresent() {
+        return discountCode != null && !discountCode.isEmpty();
+    }
 
 }

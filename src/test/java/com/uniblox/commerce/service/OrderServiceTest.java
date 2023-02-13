@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -40,8 +42,6 @@ class OrderServiceTest {
         productRepository.save(new Product(2L, "hat", 25.0));
         productRepository.save(new Product(3L, "cap", 30.0));
 
-        discountRepository.save(new Discount(1L, "FLAT_50_OFF", Discount.DiscountType.FLAT,
-                Discount.DiscountApplicability.ALWAYS, 50.0, null));
     }
 
     @AfterEach
@@ -68,9 +68,13 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("checkout correctly applies discount")
+    @DisplayName("checkout correctly applies discount when provided in checkout request")
     @Transactional
     void checkout2() {
+        discountRepository.save(new Discount(1L, "FLAT_50_OFF", Discount.DiscountType.FLAT,
+                Discount.DiscountApplicability.ALWAYS, 50.0, null));
+
+
         orderService.addToCart(new AddToCartRequest(1L, 1));
         orderService.addToCart(new AddToCartRequest(3L, 3));
         Order order = orderService.checkOut(new CheckoutRequest("FLAT_50_OFF"));
@@ -81,6 +85,28 @@ class OrderServiceTest {
         Order savedOrder =  orderRepository.findAll().stream().findFirst().get();
         assertEquals(60.0, savedOrder.getAmount());
         assertEquals(2, savedOrder.getItems().size());
+        assertEquals(List.of("FLAT_50_OFF"), savedOrder.getDiscountsApplied());
+    }
+
+    @Test
+    @DisplayName("checkout automatically picks and applies discount when not provided in checkout request")
+    @Transactional
+    void checkout3() {
+        discountRepository.save(new Discount(1L, "FLAT_50_OFF", Discount.DiscountType.FLAT,
+                Discount.DiscountApplicability.ALWAYS, 50.0, null));
+
+
+        orderService.addToCart(new AddToCartRequest(1L, 1));
+        orderService.addToCart(new AddToCartRequest(3L, 3));
+        Order order = orderService.checkOut(new CheckoutRequest());
+
+        assertEquals(60.0, order.getAmount());
+        assertEquals(1, orderRepository.findAll().size());
+
+        Order savedOrder =  orderRepository.findAll().stream().findFirst().get();
+        assertEquals(60.0, savedOrder.getAmount());
+        assertEquals(2, savedOrder.getItems().size());
+        assertEquals(List.of("FLAT_50_OFF"), savedOrder.getDiscountsApplied());
     }
 
     @Test

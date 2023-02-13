@@ -1,7 +1,7 @@
 package com.uniblox.commerce.model;
 
 public class DiscountApplierFactory {
-    public static IDiscountApplier create(Discount discount) {
+    public static DiscountApplier create(Discount discount) {
         switch (discount.getType()) {
             case FLAT -> {
                 return new FlatDiscountApplier(discount);

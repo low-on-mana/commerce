@@ -9,6 +9,11 @@ public class DiscountApplicableEveryNthOrder implements IDiscountApplicability {
 
     @Override
     public boolean isApplicable(CustomerOrderProfile customerOrderProfile) {
-        return customerOrderProfile.getNumOrders() == discount.getNumOrdersForDiscountApplicableEveryNthOrder();
+        // This condition will never happen, its just a guard rail to prevent divide by 0 crash in case of inconsistent
+        // data in system
+        if(discount.getNumOrdersForDiscountApplicableEveryNthOrder() <= 0) {
+            return false;
+        }
+        return customerOrderProfile.getNumOrders() % discount.getNumOrdersForDiscountApplicableEveryNthOrder() == 0;
     }
 }

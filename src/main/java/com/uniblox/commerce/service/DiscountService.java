@@ -6,6 +6,9 @@ import com.uniblox.commerce.repository.DiscountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class DiscountService {
@@ -21,10 +24,22 @@ public class DiscountService {
         // or a discount which is applied only on every nth order of a user
         if(discountApplicability.isApplicable(customerOrderProfile)) {
 
-            IDiscountApplier discountApplier = DiscountApplierFactory.create(discount);
+            DiscountApplier discountApplier = DiscountApplierFactory.create(discount);
 
             // There might be multiple ways to do actual computation of discount ( flat, percentage ) which we do here.
             discountApplier.apply(order);
         }
+    }
+
+    /**
+     * This method is to figure out if any preexisting discounts in system are applicable for a order before checkout phase.
+     * For example, if there is an AlwaysApplicable discount and a DiscountApplicableEveryNthOrder in system,
+     * it will present users with both the discounts if applicable and user can choose one out of it.
+     */
+    public List<Discount> findApplicableDiscounts(CustomerOrderProfile customerOrderProfile) {
+        return discountRepository.findAll().stream().filter(discount -> {
+            IDiscountApplicability discountApplicability = DiscountApplicabilityFactory.create(discount);
+            return discountApplicability.isApplicable(customerOrderProfile);
+        }).collect(Collectors.toList());
     }
 }

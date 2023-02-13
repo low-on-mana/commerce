@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -98,4 +99,17 @@ class DiscountServiceTest {
         Assertions.assertEquals(100.0, order.getAmount());
     }
 
+    @Test
+    @DisplayName("findApplicableDiscounts correctly returns number of applicable discounts")
+    void findApplicableDiscounts() {
+        CustomerOrderProfile customerOrderProfile = new CustomerOrderProfile(3);
+        List<Discount> applicableDiscounts = discountService.findApplicableDiscounts(customerOrderProfile);
+        // 3 discounts are applicable which are created in beginning of test
+        assertEquals(3, applicableDiscounts.size());
+
+        CustomerOrderProfile customerOrderProfile2 = new CustomerOrderProfile(10);
+        // since nth order discount is not applicable, only 2 discounts are returned
+        List<Discount> applicableDiscounts2 = discountService.findApplicableDiscounts(customerOrderProfile2);
+        assertEquals(2, applicableDiscounts2.size());
+    }
 }
