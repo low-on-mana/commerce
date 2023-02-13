@@ -1,5 +1,6 @@
 package com.uniblox.commerce.service;
 
+import com.uniblox.commerce.contracts.AddToCartRequest;
 import com.uniblox.commerce.model.Cart;
 import com.uniblox.commerce.model.Order;
 import com.uniblox.commerce.repository.OrderRepository;
@@ -25,8 +26,8 @@ class OrderServiceTest {
     @Test
     @DisplayName("checkout correctly creates and save order")
     void checkOut() {
-        orderService.addToCart(1L, 1);
-        orderService.addToCart(3L, 3);
+        orderService.addToCart(new AddToCartRequest(1L, 1));
+        orderService.addToCart(new AddToCartRequest(3L, 3));
         Order order = orderService.checkOut();
 
         assertEquals(110.0, order.getAmount());
@@ -43,8 +44,8 @@ class OrderServiceTest {
     @DisplayName("addToCart correctly adds item to the cart")
     void addToCart() {
 
-        orderService.addToCart(1L, 1);
-        orderService.addToCart(3L, 3);
+        orderService.addToCart(new AddToCartRequest(1L, 1));
+        orderService.addToCart(new AddToCartRequest(3L, 3));
 
         assertEquals(2, cart.getItems().size());
         assertEquals(1L, cart.getItems().get(0).getProductId());
@@ -58,8 +59,8 @@ class OrderServiceTest {
     @Test
     @DisplayName("clearCart removes all items from cart")
     void clearCart() {
-        orderService.addToCart(1L, 1);
-        orderService.addToCart(3L, 3);
+        orderService.addToCart(new AddToCartRequest(1L, 1));
+        orderService.addToCart(new AddToCartRequest(3L, 3));
 
         assertEquals(2, cart.getItems().size());
 

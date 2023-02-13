@@ -1,5 +1,6 @@
 package com.uniblox.commerce.service;
 
+import com.uniblox.commerce.contracts.AddToCartRequest;
 import com.uniblox.commerce.model.Cart;
 import com.uniblox.commerce.model.LineItem;
 import com.uniblox.commerce.model.Order;
@@ -27,8 +28,8 @@ public class OrderService {
         return order;
     }
 
-    public void addToCart(Long productId, Integer quantity) {
-        cart.addToCart(productId, quantity);
+    public void addToCart(AddToCartRequest addToCartRequest) {
+        cart.addToCart(addToCartRequest.getProductId(), addToCartRequest.getQuantity());
     }
 
     public void clearCart() {

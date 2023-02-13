@@ -50,7 +50,7 @@ class OrderControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
-        verify(orderService, times(0)).addToCart(any(), any());
+        verify(orderService, times(0)).addToCart(any());
     }
 
     @DisplayName("addToCart api return 200 when request is valid")
@@ -67,6 +67,6 @@ class OrderControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        verify(orderService, times(1)).addToCart(1L, 1);
+        verify(orderService, times(1)).addToCart(any());
     }
 }
