@@ -66,6 +66,7 @@ class OrderServiceTest {
         assertEquals(110.0, savedOrder.getAmount());
         assertEquals(0.0, savedOrder.getDiscountAmount());
         assertEquals(2, savedOrder.getItems().size());
+        assertEquals(0, cart.getItems().size());
     }
 
     @Test

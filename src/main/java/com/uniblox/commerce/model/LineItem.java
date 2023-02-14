@@ -10,6 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LineItem implements Serializable {
+
     private Long productId;
 
     private Integer quantity;

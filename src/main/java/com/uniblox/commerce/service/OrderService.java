@@ -8,6 +8,7 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,6 +49,7 @@ public class OrderService {
         }
 
         orderRepository.save(order);
+        cart.clear();
         return order;
     }
 
@@ -73,14 +75,16 @@ public class OrderService {
 
     private Order fromCart(Cart cart) {
         double total = 0.0;
-        for (LineItem lintItem : cart.getItems()) {
-            Product product = productService.getProduct(lintItem.getProductId());
-            total = total + product.getPrice() * lintItem.getQuantity();
+        List<LineItem> orderLineItems = new ArrayList<>();
+        for (LineItem lineItem : cart.getItems()) {
+            Product product = productService.getProduct(lineItem.getProductId());
+            total = total + product.getPrice() * lineItem.getQuantity();
+            orderLineItems.add(lineItem);
         }
 
         return Order.builder()
                 .amount(total)
-                .items(cart.getItems())
+                .items(orderLineItems)
                 .build();
     }
 
