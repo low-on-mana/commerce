@@ -2,10 +2,9 @@ package com.uniblox.commerce.service;
 
 import com.uniblox.commerce.contracts.AddToCartRequest;
 import com.uniblox.commerce.contracts.CheckoutRequest;
-import com.uniblox.commerce.model.Cart;
-import com.uniblox.commerce.model.Discount;
+import com.uniblox.commerce.exceptions.CartEmptyException;
+import com.uniblox.commerce.model.*;
 import com.uniblox.commerce.model.Order;
-import com.uniblox.commerce.model.Product;
 import com.uniblox.commerce.repository.DiscountRepository;
 import com.uniblox.commerce.repository.OrderRepository;
 import com.uniblox.commerce.repository.ProductRepository;
@@ -14,9 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class OrderServiceTest {
@@ -111,6 +114,12 @@ class OrderServiceTest {
         assertEquals(2, savedOrder.getItems().size());
         assertEquals(50.0, savedOrder.getDiscountAmount());
         assertEquals(List.of("FLAT_50_OFF"), savedOrder.getDiscountsApplied());
+    }
+
+    @Test
+    @DisplayName("checkout throws exception if cart is empty")
+    void checkout4() {
+        assertThrows(CartEmptyException.class, () -> orderService.checkOut(new CheckoutRequest()));
     }
 
     @Test

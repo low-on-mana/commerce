@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -19,5 +20,5 @@ public class AdminSummary implements Serializable {
 
     private List<String> discountCodes;
 
-    private List<LineItem> itemsPurchased;
+    private Map<Long, Integer> itemsPurchased;
 }

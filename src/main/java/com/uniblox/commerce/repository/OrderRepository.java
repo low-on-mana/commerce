@@ -13,7 +13,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT sum(discountAmount) from Order")
     Double totalDiscountAmount();
-
-    @Query("SELECT items from Order")
-    List<LineItem> findItems();
 }

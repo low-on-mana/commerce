@@ -30,10 +30,16 @@ public class Order {
     @Builder.Default
     private Double discountAmount = 0.0;
 
+    /**
+     *  List of items purchased for this order, Ideally we should store this in another table to simplify querying.
+     */
     @Column
     @Convert(converter = LineItemConverter.class)
     private List<LineItem> items;
 
+    /**
+     *  List of discounts applied for this order, Ideally we should store this in another table to simplify querying.
+     */
     @Column
     @Convert(converter = StringListConverter.class)
     @Builder.Default

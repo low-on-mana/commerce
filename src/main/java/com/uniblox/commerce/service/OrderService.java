@@ -2,21 +2,21 @@ package com.uniblox.commerce.service;
 
 import com.uniblox.commerce.contracts.AddToCartRequest;
 import com.uniblox.commerce.contracts.CheckoutRequest;
+import com.uniblox.commerce.exceptions.CartEmptyException;
 import com.uniblox.commerce.model.*;
 import com.uniblox.commerce.repository.OrderRepository;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     /**
-     *  Using single cart for all users. Ideally we will have a session based cart ( redis/db ) to work for multiple
-     *  users across multiple devices.
+     * Using single cart for all users. Ideally we will have a session based cart ( redis/db ) to work for multiple
+     * users across multiple devices.
      */
     private final Cart cart;
 
@@ -36,15 +36,15 @@ public class OrderService {
         CustomerOrderProfile customerOrderProfile = createProfile();
 
         // If user doesn't provide a discount code, we chose one for him automatically in the system
-        if(!checkoutRequest.isDiscountCodePresent()) {
+        if (!checkoutRequest.isDiscountCodePresent()) {
             List<Discount> applicableDiscounts = discountService.findApplicableDiscounts(customerOrderProfile);
-            if(!applicableDiscounts.isEmpty()) {
+            if (!applicableDiscounts.isEmpty()) {
                 checkoutRequest.setDiscountCode(applicableDiscounts.get(0).getCode());
             }
         }
 
         // We apply the discount if there is any discount code provided by user or automatically selected by system
-        if(checkoutRequest.isDiscountCodePresent()) {
+        if (checkoutRequest.isDiscountCodePresent()) {
             discountService.applyDiscount(checkoutRequest.getDiscountCode(), order, customerOrderProfile);
         }
 
@@ -66,8 +66,15 @@ public class OrderService {
         return orderRepository.totalDiscountAmount();
     }
 
-    public List<LineItem> listOfItemsPurchased() {
-        return orderRepository.findItems();
+    public Map<Long, Integer> listOfItemsPurchased() {
+        List<Order> orders = orderRepository.findAll();
+        HashMap<Long, Integer> productSoldCount = new HashMap<>();
+        for (Order order : orders) {
+            order.getItems().forEach(lineItem -> {
+                productSoldCount.put(lineItem.getProductId(), productSoldCount.getOrDefault(lineItem.getProductId(), 0) + lineItem.getQuantity());
+            });
+        }
+        return productSoldCount;
     }
 
     public void clearCart() {
@@ -75,6 +82,11 @@ public class OrderService {
     }
 
     private Order fromCart(Cart cart) {
+        if(cart.isEmpty()) {
+            throw new CartEmptyException();
+
+        }
+
         double total = 0.0;
         List<LineItem> orderLineItems = new ArrayList<>();
         for (LineItem lineItem : cart.getItems()) {
