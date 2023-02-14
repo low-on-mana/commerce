@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -53,8 +54,9 @@ public class OrderService {
         return order;
     }
 
-    public void addToCart(AddToCartRequest addToCartRequest) {
+    public Cart addToCart(AddToCartRequest addToCartRequest) {
         cart.addToCart(addToCartRequest.getProductId(), addToCartRequest.getQuantity());
+        return cart;
     }
 
     public Double totalPurchaseAmount() {

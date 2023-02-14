@@ -2,6 +2,7 @@ package com.uniblox.commerce.controller;
 
 import com.uniblox.commerce.contracts.AddToCartRequest;
 import com.uniblox.commerce.contracts.CheckoutRequest;
+import com.uniblox.commerce.model.Cart;
 import com.uniblox.commerce.model.Discount;
 import com.uniblox.commerce.model.Order;
 import com.uniblox.commerce.service.OrderService;
@@ -20,8 +21,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/cart/add")
-    public void addToCart(@RequestBody @Valid AddToCartRequest addToCartRequest) {
-        orderService.addToCart(addToCartRequest);
+    public Cart addToCart(@RequestBody @Valid AddToCartRequest addToCartRequest) {
+        return orderService.addToCart(addToCartRequest);
     }
 
     @PostMapping("/checkout")

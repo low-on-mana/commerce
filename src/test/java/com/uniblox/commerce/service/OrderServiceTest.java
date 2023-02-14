@@ -127,6 +127,27 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("addToCart returns the cart")
+    void addToCart2() {
+        Cart localCart = orderService.addToCart(new AddToCartRequest(1L, 1));
+
+        assertEquals(1, localCart.getItems().size());
+        assertEquals(1L, localCart.getItems().get(0).getProductId());
+        assertEquals(1, localCart.getItems().get(0).getQuantity());
+    }
+
+    @Test
+    @DisplayName("addToCart merges product with same productId")
+    void addToCart3() {
+        orderService.addToCart(new AddToCartRequest(1L, 1));
+        orderService.addToCart(new AddToCartRequest(1L, 4));
+
+        assertEquals(1, cart.getItems().size());
+        assertEquals(1L, cart.getItems().get(0).getProductId());
+        assertEquals(5, cart.getItems().get(0).getQuantity());
+    }
+
+    @Test
     @DisplayName("clearCart removes all items from cart")
     void clearCart() {
         orderService.addToCart(new AddToCartRequest(1L, 1));
