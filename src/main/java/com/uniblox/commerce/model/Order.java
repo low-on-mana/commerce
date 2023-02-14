@@ -44,7 +44,9 @@ public class Order {
     }
 
     public void provideDiscount(Double discountAmount) {
-        this.discountAmount = discountAmount;
-        this.amount = Math.max(this.amount - this.discountAmount, 0);
+        if(this.amount >= discountAmount) {
+            this.discountAmount = discountAmount;
+            this.amount = this.amount - this.discountAmount;
+        }
     }
 }
