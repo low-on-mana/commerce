@@ -18,6 +18,6 @@ public class DiscountApplicableEveryNthOrder implements IDiscountApplicability {
         if(customerOrderProfile.getNumOrders() <= 0) {
             return false;
         }
-        return customerOrderProfile.getNumOrders() % discount.getNumOrdersForDiscountApplicableEveryNthOrder() == 0;
+        return (customerOrderProfile.getNumOrders() + 1) % discount.getNumOrdersForDiscountApplicableEveryNthOrder() == 0;
     }
 }

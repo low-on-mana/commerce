@@ -80,7 +80,7 @@ class DiscountServiceTest {
         Order order = new Order();
         order.setAmount(100.0);
 
-        CustomerOrderProfile customerOrderProfile = new CustomerOrderProfile(3);
+        CustomerOrderProfile customerOrderProfile = new CustomerOrderProfile(2);
 
 
         discountService.applyDiscount("FLAT_10_OFF_EVERY_3RD_ORDER", order, customerOrderProfile);
@@ -104,7 +104,7 @@ class DiscountServiceTest {
     @Test
     @DisplayName("findApplicableDiscounts correctly returns number of applicable discounts")
     void findApplicableDiscounts() {
-        CustomerOrderProfile customerOrderProfile = new CustomerOrderProfile(3);
+        CustomerOrderProfile customerOrderProfile = new CustomerOrderProfile(2);
         List<Discount> applicableDiscounts = discountService.findApplicableDiscounts(customerOrderProfile);
         // 3 discounts are applicable which are created in beginning of test
         assertEquals(3, applicableDiscounts.size());
